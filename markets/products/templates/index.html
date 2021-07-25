@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+Магазинчик
+{% endblock %}
+{% block content %}
+<div class='container'>
+    <div class='row row-cols-3 gy-4 gx-4'>
+{% for product in products %}
+        <div class="col">
+    <div class='card'>
+        <div class='card-title'>
+            {{ product.name }}
+        </div>
+        <div class="card-text">
+            {{ product.description }}
+        </div>
+        <p class="card-text">
+            <small class="text-muted">
+                {{ product.price }}
+            </small>
+             <a role="button" class="btn btn-primary" href="{% url 'product' product.id %}">Подробнее</a>
+        </p>
+    </div>
+            </div>
+{% endfor %}
+    </div>
+    </div>
+{% endblock %}
