@@ -39,21 +39,33 @@ def cart(request):
     if request.session.get('cart', False):
         pr = request.session['cart']
     else:
-        pr = []
-    pr = list(map(lambda x: (get_object_or_404(Product, id=x[0]), int(x[1])), pr))
-    context = {'products': pr}
+        pr = dict()
     print(pr)
+    pr = list(map(lambda x: (Product.objects.filter(id=int(x))[0], int(pr[x])), pr.keys()))
+    print(pr)
+    context = {'products': pr}
     return render(request, 'cart.html', context)
 
 
 def add_cart(request, product_id):
-    product_exist = Product.objects.filter(id=product_id).exist()
+    print(product_id)
+    product_exist = Product.objects.filter(id=product_id)
+    print(product_exist)
     if request.method == "POST" and product_exist:
-        count = request.POST['count']
+        count = int(request.POST['count'])
+        print(count)
         if request.session.get('cart', False):
-            request.session['cart'] += [(product_id, count)]
+            print(request.session['cart'].keys(), str(product_id), str(product_id) in request.session['cart'].keys())
+            if str(product_id) in request.session['cart'].keys():
+                print('!')
+                request.session['cart'][str(product_id)] = request.session['cart'][str(product_id)] + count
+                print(request.session['cart'][str(product_id)], count)
+                print(request.session['cart'])
+            else:
+                request.session['cart'][str(product_id)] = count
         else:
-            request.session['cart'] = [(product_id, count)]
+            request.session['cart'] = {str(product_id): count}
+        print(request.session['cart'])
         return JsonResponse({"norm": 'norm'}, status=200)
     else:
-        return JsonResponse({"norm": 'norm'}, status=400)
+        return JsonResponse({"nenorm": 'nenorm'}, status=404)

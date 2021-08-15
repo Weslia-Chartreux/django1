@@ -17,9 +17,9 @@
                 {{ product.price }}
             </small>
         </p>
-        <form id="CartProductForm" method="POST">
+        <form id="{{ product.id }}" method="POST">
             {% csrf_token %}
-            {{ Cform }}
+            <input id="{{ product.id }}_count">
             <input type="submit" name="contact-submit" class="btn btn-success btn-lg" value="Добавить в корзину"/>
         </form>
     </div>
@@ -28,16 +28,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#CartProductForm').submit(function () {
+            $('#{{ product.id }}').submit(function () {
+                var product_count = document.getElementById("{{ product.id }}_count").value;
+                var $crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
                 $.ajax({
-                    data: $(this).serialize(),
+                    data: {'count': product_count},
                     type: 'post', // GET or POST
                     url: "{% url 'add_cart' product.id %}",
+                    headers:{"X-CSRFToken": $crf_token},
                     success: function (response) {
                       alert("норм");
+                      console.log(response);
                   },
                   error: function (response) {
                       alert("не норм");
+                      console.log(response);
                   }
               });
               return false;
